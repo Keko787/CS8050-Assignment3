@@ -21,7 +21,7 @@ public class TreeVisualizerController {
     private VBox view;
     private ComboBox<String> treeTypeComboBox;
     private TextField inputField;
-    private Button insertButton, deleteButton, searchButton, clearButton;
+    private Button insertButton, deleteButton, searchButton, clearButton, inorderButton;
     private Canvas treeCanvas;
     private TextArea outputArea;
     private List<Integer> keys = new ArrayList<>();
@@ -48,7 +48,7 @@ public class TreeVisualizerController {
         //trees.put("Red-Black Tree", new RedBlackTree<>());
         //trees.put("Min Heap", new MinHeap<>());
         //trees.put("Max Heap", new MaxHeap<>());
-        //trees.put("2-4 Tree", new Tree24<>());
+        trees.put("2-4 Tree", new Tree24<>());
         currentTree = trees.get("Binary Search Tree");
     }
 
@@ -65,8 +65,9 @@ public class TreeVisualizerController {
         deleteButton = new Button("Delete");
         searchButton = new Button("Search");
         clearButton = new Button("Clear");
+        inorderButton = new Button("In-Order Traversal");
 
-        HBox buttonBox = new HBox(10, insertButton, deleteButton, searchButton, clearButton);
+        HBox buttonBox = new HBox(10, insertButton, deleteButton, searchButton, clearButton, inorderButton);
 
         treeCanvas = new Canvas(1000, 675);
 
@@ -92,6 +93,7 @@ public class TreeVisualizerController {
         deleteButton.setOnAction(e -> handleDelete());
         searchButton.setOnAction(e -> handleSearch());
         clearButton.setOnAction(e -> handleClear());
+        inorderButton.setOnAction(e -> handleInorderTraversal());
         treeTypeComboBox.setOnAction(e -> handleTreeTypeChange());
     }
 
@@ -138,6 +140,15 @@ public class TreeVisualizerController {
         outputArea.appendText("Tree cleared.\n");
     }
 
+    private void handleInorderTraversal() {
+        List<Integer> traversal = currentTree.inorderTraversal();
+        if (traversal.isEmpty()) {
+            outputArea.appendText("Tree is empty.\n");
+        } else {
+            outputArea.appendText("In-order traversal: " + traversal + "\n");
+        }
+    }
+
     private void handleTreeTypeChange() {
         String selectedType = treeTypeComboBox.getValue();
         currentTree = trees.get(selectedType);
@@ -149,7 +160,17 @@ public class TreeVisualizerController {
         GraphicsContext gc = treeCanvas.getGraphicsContext2D();
         gc.clearRect(0, 0, treeCanvas.getWidth(), treeCanvas.getHeight());
 
-        if (currentTree.getRoot() != null) {
+        // Check if this is a 2-4 tree
+        if (currentTree instanceof Tree24) {
+            Tree24<Integer> tree24 = (Tree24<Integer>) currentTree;
+            if (tree24.get24Root() != null) {
+                int depth = get24TreeDepth(tree24.get24Root());
+                double verticalSpacing = (treeCanvas.getHeight() - 80) / Math.max(depth, 1);
+                draw24Tree(gc, tree24.get24Root(), treeCanvas.getWidth() / 2, 40, treeCanvas.getWidth() / 2, verticalSpacing);
+            } else {
+                outputArea.appendText("Tree is empty.\n");
+            }
+        } else if (currentTree.getRoot() != null) {
             int depth = getTreeDepth(currentTree.getRoot());
             int width = getTreeWidth(currentTree.getRoot());
 
@@ -295,5 +316,112 @@ public class TreeVisualizerController {
 
     private String determineTreeType(Tree<?> tree) {
         return currentTree.type();
+    }
+
+    // 2-4 Tree visualization methods
+    private void draw24Tree(GraphicsContext gc, Object node, double x, double y, double hSpacing, double vSpacing) {
+        if (node == null) return;
+
+        // Use reflection to access the inner Node class methods
+        try {
+            java.lang.reflect.Method getKeyCountMethod = node.getClass().getDeclaredMethod("getKeyCount");
+            getKeyCountMethod.setAccessible(true);
+            int keyCount = (int) getKeyCountMethod.invoke(node);
+
+            double nodeWidth = 40 + (keyCount - 1) * 30;
+            double nodeHeight = 30;
+
+            // Draw node rectangle
+            gc.setFill(Color.LIGHTBLUE);
+            gc.setStroke(Color.BLUE);
+            gc.setLineWidth(2);
+            gc.fillRoundRect(x - nodeWidth / 2, y - nodeHeight / 2, nodeWidth, nodeHeight, 10, 10);
+            gc.strokeRoundRect(x - nodeWidth / 2, y - nodeHeight / 2, nodeWidth, nodeHeight, 10, 10);
+
+            // Draw keys
+            gc.setFill(Color.BLACK);
+            gc.setFont(new javafx.scene.text.Font(14));
+            java.lang.reflect.Method getKeyMethod = node.getClass().getDeclaredMethod("getKey", int.class);
+            getKeyMethod.setAccessible(true);
+
+            for (int i = 0; i < keyCount; i++) {
+                Integer key = (Integer) getKeyMethod.invoke(node, i);
+                String text = key.toString();
+                double textX = x - nodeWidth / 2 + 15 + i * 30;
+                double textY = y + 5;
+                gc.fillText(text, textX, textY);
+
+                // Draw separators between keys
+                if (i < keyCount - 1) {
+                    gc.setStroke(Color.BLUE);
+                    gc.setLineWidth(1);
+                    double sepX = x - nodeWidth / 2 + 30 + i * 30;
+                    gc.strokeLine(sepX, y - nodeHeight / 2, sepX, y + nodeHeight / 2);
+                }
+            }
+
+            // Draw children
+            java.lang.reflect.Method isLeafMethod = node.getClass().getDeclaredMethod("isLeaf");
+            isLeafMethod.setAccessible(true);
+            boolean isLeaf = (boolean) isLeafMethod.invoke(node);
+
+            if (!isLeaf) {
+                java.lang.reflect.Method getChildCountMethod = node.getClass().getDeclaredMethod("getChildCount");
+                getChildCountMethod.setAccessible(true);
+                int childCount = (int) getChildCountMethod.invoke(node);
+
+                java.lang.reflect.Method getChildMethod = node.getClass().getDeclaredMethod("getChild", int.class);
+                getChildMethod.setAccessible(true);
+
+                double childSpacing = hSpacing / (childCount + 1);
+
+                for (int i = 0; i < childCount; i++) {
+                    Object child = getChildMethod.invoke(node, i);
+                    if (child != null) {
+                        // Calculate child position
+                        double childX = x - hSpacing / 2 + (i + 1) * childSpacing;
+                        double childY = y + vSpacing;
+
+                        // Draw line to child
+                        gc.setStroke(Color.BLACK);
+                        gc.setLineWidth(1);
+                        gc.strokeLine(x, y + nodeHeight / 2, childX, childY - 15);
+
+                        // Recursively draw child
+                        draw24Tree(gc, child, childX, childY, hSpacing / 2, vSpacing);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            outputArea.appendText("Error drawing 2-4 tree: " + e.getMessage() + "\n");
+            e.printStackTrace();
+        }
+    }
+
+    private int get24TreeDepth(Object node) {
+        if (node == null) return 0;
+
+        try {
+            java.lang.reflect.Method isLeafMethod = node.getClass().getDeclaredMethod("isLeaf");
+            isLeafMethod.setAccessible(true);
+            boolean isLeaf = (boolean) isLeafMethod.invoke(node);
+            if (isLeaf) return 1;
+
+            int maxChildDepth = 0;
+            java.lang.reflect.Method getChildCountMethod = node.getClass().getDeclaredMethod("getChildCount");
+            getChildCountMethod.setAccessible(true);
+            int childCount = (int) getChildCountMethod.invoke(node);
+
+            java.lang.reflect.Method getChildMethod = node.getClass().getDeclaredMethod("getChild", int.class);
+            getChildMethod.setAccessible(true);
+
+            for (int i = 0; i < childCount; i++) {
+                Object child = getChildMethod.invoke(node, i);
+                maxChildDepth = Math.max(maxChildDepth, get24TreeDepth(child));
+            }
+            return 1 + maxChildDepth;
+        } catch (Exception e) {
+            return 0;
+        }
     }
 }
