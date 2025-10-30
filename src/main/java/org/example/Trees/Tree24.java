@@ -129,6 +129,10 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
             return keys.size() >= 1;
         }
 
+        //
+        // Helpers
+        //
+
         /**
          * Find the index where the key should be inserted or where to search
          */
@@ -146,10 +150,18 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
         }
     }
 
+    //
+    // Constructor
+    //
+
     public Tree24() {
         this.root = null;
         this.size = 0;
     }
+
+    //
+    // Operators
+    //
 
     @Override
     public void insert(T value) {
