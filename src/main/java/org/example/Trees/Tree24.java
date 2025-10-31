@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 2-4 Tree (B-Tree of order 4) Implementation
+ * 2-4 Tree Implementation
  * Properties:
  * - Each node has 1-3 keys
  * - Each internal node has 2-4 children
@@ -18,13 +18,14 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
     private int size;
 
     /**
-     * Node class for 2-4 Tree (B-Tree of order 4)
+     * NODE CLASS for 2-4 Tree
      * Each node can have:
      * - 1 to 3 keys (values)
-     * - 0 to 4 children
+     * - 0 to 4 children ( x<s,  s<x<m, m<x<l, x>l)
      * - Keys are kept in sorted order
      */
     private class Node implements Serializable {
+        // Node Class Setup and Constructors
         List<T> keys;           // Values stored in this node (1-3 keys)
         List<Node> children;    // Child pointers (0-4 children)
         boolean isLeaf;         // True if this is a leaf node
@@ -41,7 +42,8 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
             this.isLeaf = isLeaf;
         }
 
-        // Getters and setters
+        // Node Class Getters and setters
+
         List<T> getKeys() {
             return keys;
         }
@@ -66,7 +68,8 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
             this.isLeaf = isLeaf;
         }
 
-        // Utility methods
+        // Node Class Utility methods
+
         int getKeyCount() {
             return keys.size();
         }
@@ -88,6 +91,8 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
             }
             return null;
         }
+
+        // Node Class Operators
 
         void addKey(T key) {
             keys.add(key);
@@ -121,17 +126,13 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
             return null;
         }
 
-        boolean isFull() {
+        boolean isFull() {  // node max size is 3
             return keys.size() >= 3;
         }
 
         boolean hasMinimumKeys() {
             return keys.size() >= 1;
         }
-
-        //
-        // Helpers
-        //
 
         /**
          * Find the index where the key should be inserted or where to search
@@ -144,14 +145,16 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
             return i;
         }
 
+        // Node Class Helper Method
         @Override
         public String toString() {
             return "Node{keys=" + keys + ", isLeaf=" + isLeaf + "}";
         }
     }
+    // End of Node Class
 
     //
-    // Constructor
+    // 2-4 Tree Class Constructor
     //
 
     public Tree24() {
@@ -160,7 +163,7 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
     }
 
     //
-    // Operators
+    //  2-4 Tree ClassOperators
     //
 
     @Override
@@ -169,6 +172,7 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
             throw new IllegalArgumentException("Cannot insert null value");
         }
 
+        // if no root, make a root
         if (root == null) {
             root = new Node();
             root.addKey(value);
