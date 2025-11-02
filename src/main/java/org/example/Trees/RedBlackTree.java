@@ -89,8 +89,9 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T>, Serializa
             throw new IllegalArgumentException("Cannot insert null value");
         }
 
-        Node newNode = new Node(value);
+        Node newNode = new Node(value); // make the new node block
 
+        // if no root, make new root
         if (root == null) {
             root = newNode;
             root.color = BLACK; // Root must be black
@@ -125,11 +126,13 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T>, Serializa
         }
 
         size++;
+        // eof BST Insert
 
         // Fix Red-Black Tree properties
         fixInsert(newNode);
     }
 
+    // Ensures the Red Black Tree Color is correct
     private void fixInsert(Node node) {
         while (node != root && node.parent.color == RED) {
             Node parent = node.parent;
@@ -184,15 +187,18 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T>, Serializa
 
     @Override
     public boolean delete(T value) {
+        // if value or root doesnt exit dont delete
         if (root == null || value == null) {
             return false;
         }
 
+        // if cant find node dont delete
         Node nodeToDelete = findNode(root, value);
         if (nodeToDelete == null) {
             return false;
         }
 
+        // delete node if found and decrease size
         deleteNode(nodeToDelete);
         size--;
         return true;
@@ -213,6 +219,7 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T>, Serializa
         }
     }
 
+    // delete the node and rearrange the nodes with the red black tree scheme in mind
     private void deleteNode(Node node) {
         Node replacement;
         Node nodeToFix;
@@ -265,6 +272,7 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T>, Serializa
         }
     }
 
+    // fix the color of the tree and nodes
     private void fixDelete(Node node) {
         while (node != root && (node == null || node.color == BLACK)) {
             if (node == node.parent.left) {
@@ -357,6 +365,7 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T>, Serializa
         }
     }
 
+    // find the left most node
     private Node minimum(Node node) {
         while (node.left != null) {
             node = node.left;

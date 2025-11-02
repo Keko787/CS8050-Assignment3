@@ -42,7 +42,9 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
             this.isLeaf = isLeaf;
         }
 
+        //
         // Node Class Getters and setters
+        //
 
         List<T> getKeys() {
             return keys;
@@ -68,7 +70,9 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
             this.isLeaf = isLeaf;
         }
 
+        //
         // Node Class Utility methods
+        //
 
         int getKeyCount() {
             return keys.size();
@@ -92,7 +96,9 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
             return null;
         }
 
+        //
         // Node Class Operators
+        //
 
         void addKey(T key) {
             keys.add(key);
@@ -145,7 +151,10 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
             return i;
         }
 
+        //
         // Node Class Helper Method
+        //
+
         @Override
         public String toString() {
             return "Node{keys=" + keys + ", isLeaf=" + isLeaf + "}";
