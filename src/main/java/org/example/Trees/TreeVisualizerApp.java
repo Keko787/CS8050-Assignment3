@@ -31,7 +31,7 @@ public class TreeVisualizerApp extends Application {
       root.setTop(createMenuBar(controller));
 
       Scene scene = new Scene(root, 1024, 1024);
-      primaryStage.setTitle("Tree Visualizer");
+      primaryStage.setTitle("Group 8 CS-8050 Tree Visualizer By KK & CF");
       primaryStage.getIcons().add(new Image("file:src/main/resources/UMIcon.png"));
       primaryStage.setScene(scene);
       primaryStage.show();
