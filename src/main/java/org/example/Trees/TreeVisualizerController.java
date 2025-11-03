@@ -248,6 +248,10 @@ public class TreeVisualizerController {
         return view;
     }
 
+    //
+    // Save and Load Methods
+    //
+
     public void saveTree() {
         // This is a placeholder implementation. In a real application, you would
         // implement serialization of the tree structure to a file.
