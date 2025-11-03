@@ -1,21 +1,45 @@
 package org.example.Trees;
-//Auther: Abdelnasser Ouda
+//Author: Abdelnasser Ouda
 import javafx.scene.paint.Color;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Binary Search Tree Implementation
+ * Binary Search Tree property (left < parent < right)
+ */
 public class BinarySearchTree<T extends Comparable<T>> implements Tree<T> , Serializable {
+    //
+    // BST Class Setup
+    //
+
     private Node root;
     private int size;
 
+    /**
+     * NODE CLASS for BST
+     * Each node can have:
+     * - 1 key (value)
+     * - 0 to 2 children ( x<s, x>s)
+     */
     private class Node implements TreeNode<T> , Serializable{
+
+        //
+        // Node Class Setup and Constructor
+        //
+
+
         T value;
         Node left, right;
 
         Node(T value) {
             this.value = value;
         }
+
+        //
+        // Node Class Operation Methods
+        //
 
         @Override
         public T getValue() { return value; }
@@ -29,10 +53,26 @@ public class BinarySearchTree<T extends Comparable<T>> implements Tree<T> , Seri
         public String getColor() { return null; }
     }
 
+    //
+    // BST Helper Methods
+    //
 
     @Override
     public Color color() { return Color.BLACK; }
 
+    @Override
+    public String type() {
+        return "BST";
+    }
+
+    //
+    // BST Operation Methods
+    //
+
+
+    /**
+     * Insert
+     */
     @Override
     public void insert(T value) {
         root = insert(root, value);
@@ -51,11 +91,9 @@ public class BinarySearchTree<T extends Comparable<T>> implements Tree<T> , Seri
         return node;
     }
 
-    @Override
-    public String type() {
-         return "BST";
-    }
-
+    /**
+     * Delete
+     */
     @Override
     public boolean delete(T value) {
         int originalSize = size;
@@ -93,6 +131,9 @@ public class BinarySearchTree<T extends Comparable<T>> implements Tree<T> , Seri
         return node;
     }
 
+    /**
+     * Contains
+     */
     @Override
     public boolean contains(T value) {
         return contains(root, value);
@@ -122,6 +163,9 @@ public class BinarySearchTree<T extends Comparable<T>> implements Tree<T> , Seri
         return size;
     }
 
+    /**
+     * Inorder Traversal
+     */
     @Override
     public List<T> inorderTraversal() {
         List<T> result = new ArrayList<>();

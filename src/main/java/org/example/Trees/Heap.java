@@ -1,5 +1,5 @@
 package org.example.Trees;
-//Auther: Abdelnasser Ouda
+//Author: Abdelnasser Ouda
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,19 +13,24 @@ public abstract class Heap<T extends Comparable<T>> implements Tree<T> , Seriali
 
     @Override
     public void insert(T value) {
-        heap.add(value);
+        heap.add(value); // add value to the Heap ArrayList
+
+        // Reheap (up) the heap array
         heapifyUp(heap.size() - 1);
     }
 
     @Override
     public boolean delete(T value) {
+        // finds index of value to delete
         int index = heap.indexOf(value);
         if (index == -1) return false;
 
+        // swap the index to be deleted to the last Index, then delete the new last index
         int lastIndex = heap.size() - 1;
         swap(index, lastIndex);
         heap.remove(lastIndex);
 
+        // reheap (down) the heap
         if (index < heap.size()) {
             heapifyDown(index);
         }
@@ -58,6 +63,9 @@ public abstract class Heap<T extends Comparable<T>> implements Tree<T> , Seriali
         return heap.isEmpty() ? null : new HeapNode(0);
     }
 
+    /**
+    * These are the methods to use in MinHeap and MaxHeap, Reheap for Insertion (up) and Deletion (down)
+    */
     protected abstract void heapifyUp(int index);
     protected abstract void heapifyDown(int index);
 

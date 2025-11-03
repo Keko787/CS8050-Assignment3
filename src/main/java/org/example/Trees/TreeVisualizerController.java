@@ -1,5 +1,5 @@
 package org.example.Trees;
-//Auther: Abdelnasser Ouda
+//Author: Abdelnasser Ouda
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -29,7 +29,7 @@ public class TreeVisualizerController {
     private Tree<Integer> currentTree;
     private Map<String, Tree<Integer>> trees;
 
-    private Stage stage;  // You'll need to set this when creating the controller
+    private Stage stage;  // need to set this when creating the controller
 
     public void setStage(Stage stage) {
         this.stage = stage;

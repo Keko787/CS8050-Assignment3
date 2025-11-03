@@ -80,7 +80,7 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T>, Serializa
     }
 
     //
-    // Tree Interface Methods
+    // Red Black Tree Operation Methods
     //
 
     @Override
@@ -99,16 +99,25 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T>, Serializa
             return;
         }
 
-        // Standard BST insert
+        /**
+        * Standard BST insert to insert the new value
+        */
+
+        // init current as root and parent as null
         Node current = root;
         Node parent = null;
 
+        // Edge case: while the current node is not null, navigate the element based on the input value
         while (current != null) {
+            // set parrent to current value, at start - root
             parent = current;
+            // make an integer comparison metric based on the input value and current element's value
             int cmp = value.compareTo(current.value);
 
+            // if comparison metric less than 0, set current element to the left child
             if (cmp < 0) {
                 current = current.left;
+            // If comparison metric greater than 0, set current element to the right child
             } else if (cmp > 0) {
                 current = current.right;
             } else {
@@ -117,18 +126,20 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T>, Serializa
             }
         }
 
+        // check the parent which is the parent of current element
         newNode.parent = parent;
         int cmp = value.compareTo(parent.value);
+        // if the current element is less than the input value, put it in left child
         if (cmp < 0) {
             parent.left = newNode;
-        } else {
+        } else {  // if the current element is less than the input value, put it in left child
             parent.right = newNode;
         }
 
         size++;
         // eof BST Insert
 
-        // Fix Red-Black Tree properties
+        // Fix Red-Black Tree color properties
         fixInsert(newNode);
     }
 

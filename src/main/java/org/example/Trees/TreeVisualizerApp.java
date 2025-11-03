@@ -1,5 +1,5 @@
 package org.example.Trees;
-//Auther: Abdelnasser Ouda
+//Author: Abdelnasser Ouda
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;

@@ -9,7 +9,7 @@ import javafx.scene.paint.Color;
 public class MaxHeap<T extends Comparable<T>> extends Heap<T> {
 
     //
-    // Class Setup
+    // MaxHeap Operator Methods
     //
 
     @Override
@@ -23,10 +23,12 @@ public class MaxHeap<T extends Comparable<T>> extends Heap<T> {
     }
 
     //
-    // Operator Methods
+    // MaxHeap Operator Methods
     //
 
-    // Reheap for insertion
+    /**
+    * Reheap for Insertion (up)
+    */
     @Override
     protected void heapifyUp(int index) {
         // Move the element up until heap property is satisfied
@@ -43,7 +45,9 @@ public class MaxHeap<T extends Comparable<T>> extends Heap<T> {
         }
     }
 
-    // Reheap for deletion
+    /**
+    * Reheap for Deletion (down)
+    */
     @Override
     protected void heapifyDown(int index) {
         // Move the element down until heap property is satisfied

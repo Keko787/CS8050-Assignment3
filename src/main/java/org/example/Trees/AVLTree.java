@@ -78,9 +78,26 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T>, Serializable {
     }
 
     //
-    // Tree Interface Methods
+    // AVL Tree Helper Methods
     //
 
+    @Override
+    public String type() {
+        return "AVL Tree";
+    }
+
+    @Override
+    public Color color() {
+        return Color.GREEN;
+    }
+
+    //
+    // AVL Tree Operation Methods
+    //
+
+    /**
+     * Insert
+     */
     @Override
     public void insert(T value) {
         if (value == null) {
@@ -140,6 +157,9 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T>, Serializable {
         return node;
     }
 
+    /**
+     * Delete
+     */
     @Override
     public boolean delete(T value) {
         if (root == null || value == null) {
@@ -250,6 +270,9 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T>, Serializable {
         return size;
     }
 
+    /**
+     * Inorder Search
+     */
     @Override
     public List<T> inorderTraversal() {
         List<T> result = new ArrayList<>();
@@ -263,16 +286,6 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T>, Serializable {
             result.add(node.value);
             inorderTraversal(node.right, result);
         }
-    }
-
-    @Override
-    public String type() {
-        return "AVL Tree";
-    }
-
-    @Override
-    public Color color() {
-        return Color.GREEN;
     }
 
     @Override
@@ -359,11 +372,11 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T>, Serializable {
     }
 
     //
-    // Utility methods for debugging
+    // Helper methods for debugging
     //
 
     /**
-     * Check if the tree is balanced (for testing)
+     * Check if the tree is balanced (for debugging and testing on runtime)
      */
     public boolean isBalanced() {
         return isBalanced(root);
@@ -383,7 +396,7 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T>, Serializable {
     }
 
     /**
-     * Get the height of the tree
+     * Get the height of the tree (to test height and other height checking methods)
      */
     public int getHeight() {
         return height(root);
