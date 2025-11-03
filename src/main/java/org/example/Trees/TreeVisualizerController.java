@@ -320,7 +320,10 @@ public class TreeVisualizerController {
         return currentTree.type();
     }
 
+    //
     // 2-4 Tree visualization methods
+    //
+
     private void draw24Tree(GraphicsContext gc, Object node, double x, double y, double hSpacing, double vSpacing) {
         if (node == null) return;
 
