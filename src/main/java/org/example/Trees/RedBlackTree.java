@@ -15,6 +15,10 @@ import java.util.List;
  * 5. All paths from root to leaves have the same number of black nodes
  */
 public class RedBlackTree<T extends Comparable<T>> implements Tree<T>, Serializable {
+    //
+    // Red Black Tree Class Setup
+    //
+
     private static final boolean RED = true;
     private static final boolean BLACK = false;
 
@@ -71,7 +75,7 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T>, Serializa
     }
 
     //
-    // Constructor
+    // Red Black Tree Constructor
     //
 
     public RedBlackTree() {
@@ -80,9 +84,26 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T>, Serializa
     }
 
     //
+    // Red Black Tree Helper Methods
+    //
+
+    @Override
+    public String type() {
+        return "RBT";
+    }
+
+    @Override
+    public Color color() {
+        return Color.DARKRED;
+    }
+
+    //
     // Red Black Tree Operation Methods
     //
 
+    /**
+     * Insert
+     */
     @Override
     public void insert(T value) {
         if (value == null) {
@@ -99,7 +120,8 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T>, Serializa
             return;
         }
 
-        /**
+        // if root exist, insert the value using BST properties
+        /*
         * Standard BST insert to insert the new value
         */
 
@@ -145,11 +167,15 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T>, Serializa
 
     // Ensures the Red Black Tree Color is correct
     private void fixInsert(Node node) {
+        // loop conditions: loop until node is root and parent of node is red
         while (node != root && node.parent.color == RED) {
+            // init input node's parent and grandparent
             Node parent = node.parent;
             Node grandparent = parent.parent;
 
+            // if parent is less than grandparent
             if (parent == grandparent.left) {
+                // uncle is right child
                 Node uncle = grandparent.right;
 
                 // Case 1: Uncle is red - recolor
@@ -171,6 +197,7 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T>, Serializa
                     rotateRight(grandparent);
                 }
             } else {
+                // if parent is right child, then uncle is left child
                 Node uncle = grandparent.left;
 
                 // Case 1: Uncle is red - recolor
@@ -196,6 +223,9 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T>, Serializa
         root.color = BLACK; // Root must always be black
     }
 
+    /**
+     * Delete
+     */
     @Override
     public boolean delete(T value) {
         // if value or root doesnt exit dont delete
@@ -216,16 +246,23 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T>, Serializa
     }
 
     private Node findNode(Node node, T value) {
+        // base case: if node is null return no match
         if (node == null) {
             return null;
         }
 
+        // compare inputted value to inputted node
         int cmp = value.compareTo(node.value);
+        // if comparison is value is less than node, recursively call using left child
         if (cmp < 0) {
             return findNode(node.left, value);
-        } else if (cmp > 0) {
+        }
+        else if (cmp > 0) {
+            // if comparison is value is greater than node, recursively call using right child
             return findNode(node.right, value);
-        } else {
+        }
+        // if comparison is the same, the node is found
+        else {
             return node;
         }
     }
@@ -376,6 +413,24 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T>, Serializa
         }
     }
 
+    /**
+     * Inorder Traversal
+     */
+    @Override
+    public List<T> inorderTraversal() {
+        List<T> result = new ArrayList<>();
+        inorderTraversal(root, result);
+        return result;
+    }
+
+    private void inorderTraversal(Node node, List<T> result) {
+        if (node != null) {
+            inorderTraversal(node.left, result);
+            result.add(node.value);
+            inorderTraversal(node.right, result);
+        }
+    }
+
     // find the left most node
     private Node minimum(Node node) {
         while (node.left != null) {
@@ -398,31 +453,6 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T>, Serializa
     @Override
     public int size() {
         return size;
-    }
-
-    @Override
-    public List<T> inorderTraversal() {
-        List<T> result = new ArrayList<>();
-        inorderTraversal(root, result);
-        return result;
-    }
-
-    private void inorderTraversal(Node node, List<T> result) {
-        if (node != null) {
-            inorderTraversal(node.left, result);
-            result.add(node.value);
-            inorderTraversal(node.right, result);
-        }
-    }
-
-    @Override
-    public String type() {
-        return "RBT";
-    }
-
-    @Override
-    public Color color() {
-        return Color.DARKRED;
     }
 
     @Override

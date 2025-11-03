@@ -87,12 +87,28 @@ public abstract class Heap<T extends Comparable<T>> implements Tree<T> , Seriali
         return 2 * i + 2;
     }
 
+    /**
+     * Heap Node Class
+     */
     private class HeapNode implements TreeNode<T> {
+        //
+        // Heap Node Class Setup and Constructor
+        //
         private int index;
 
         HeapNode(int index) {
             this.index = index;
         }
+
+        //
+        // Heap Node Class Helper Method
+        //
+
+        public String getColor() { return "null"; }
+
+        //
+        // Heap Node Class Operation Methods
+        //
 
         @Override
         public T getValue() {
@@ -111,6 +127,6 @@ public abstract class Heap<T extends Comparable<T>> implements Tree<T> , Seriali
             return rightIndex < heap.size() ? new HeapNode(rightIndex) : null;
         }
 
-        public String getColor() { return "null"; }
+
     }
 }

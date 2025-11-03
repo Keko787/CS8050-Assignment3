@@ -69,7 +69,6 @@ public class BinarySearchTree<T extends Comparable<T>> implements Tree<T> , Seri
     // BST Operation Methods
     //
 
-
     /**
      * Insert
      */
@@ -152,17 +151,6 @@ public class BinarySearchTree<T extends Comparable<T>> implements Tree<T> , Seri
         }
     }
 
-    @Override
-    public void clear() {
-        root = null;
-        size = 0;
-    }
-
-    @Override
-    public int size() {
-        return size;
-    }
-
     /**
      * Inorder Traversal
      */
@@ -184,5 +172,16 @@ public class BinarySearchTree<T extends Comparable<T>> implements Tree<T> , Seri
     @Override
     public TreeNode<T> getRoot() {
         return root;
+    }
+
+    @Override
+    public void clear() {
+        root = null;
+        size = 0;
+    }
+
+    @Override
+    public int size() {
+        return size;
     }
 }

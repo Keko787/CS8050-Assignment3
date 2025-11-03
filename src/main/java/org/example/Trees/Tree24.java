@@ -25,7 +25,10 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
      * - Keys are kept in sorted order
      */
     private class Node implements Serializable {
+        //
         // Node Class Setup and Constructors
+        //
+
         List<T> keys;           // Values stored in this node (1-3 keys)
         List<Node> children;    // Child pointers (0-4 children)
         boolean isLeaf;         // True if this is a leaf node
@@ -100,6 +103,9 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
         // Node Class Operators
         //
 
+        /**
+         * Add and Insert
+         */
         void addKey(T key) {
             keys.add(key);
             // Keep keys sorted
@@ -118,6 +124,9 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
             children.add(index, child);
         }
 
+        /**
+         * Remove
+         */
         T removeKey(int index) {
             if (index >= 0 && index < keys.size()) {
                 return keys.remove(index);
@@ -131,6 +140,10 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
             }
             return null;
         }
+
+        /**
+         * Size Check and Navigation
+         */
 
         boolean isFull() {  // node max size is 3
             return keys.size() >= 3;
@@ -172,9 +185,26 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
     }
 
     //
-    //  2-4 Tree ClassOperators
+    //  2-4 Tree Class Helper Methods
     //
 
+    @Override
+    public String type() {
+        return "2-4 Tree";
+    }
+
+    @Override
+    public Color color() {
+        return Color.BLUE;
+    }
+
+    //
+    //  2-4 Tree Class Operation Methods
+    //
+
+    /**
+     * Insert
+     */
     @Override
     public void insert(T value) {
         if (value == null) {
@@ -256,6 +286,9 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
         parent.insertChildAt(index + 1, newChild);
     }
 
+    /**
+     * Delete
+     */
     @Override
     public boolean delete(T value) {
         if (root == null || value == null) {
@@ -339,6 +372,9 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
         }
     }
 
+    /**
+     * Tree Sorting Operations
+     */
     private T getPredecessor(Node node, int index) {
         Node current = node.getChild(index);
         while (!current.isLeaf()) {
@@ -463,17 +499,6 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
     }
 
     @Override
-    public void clear() {
-        root = null;
-        size = 0;
-    }
-
-    @Override
-    public int size() {
-        return size;
-    }
-
-    @Override
     public List<T> inorderTraversal() {
         List<T> result = new ArrayList<>();
         inorderTraversal(root, result);
@@ -502,16 +527,6 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
     }
 
     @Override
-    public String type() {
-        return "2-4 Tree";
-    }
-
-    @Override
-    public Color color() {
-        return Color.BLUE;
-    }
-
-    @Override
     public TreeNode<T> getRoot() {
         // 2-4 tree doesn't use TreeNode interface directly
         // We'll create an adapter for visualization
@@ -520,5 +535,16 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
 
     public Node get24Root() {
         return root;
+    }
+
+    @Override
+    public void clear() {
+        root = null;
+        size = 0;
+    }
+
+    @Override
+    public int size() {
+        return size;
     }
 }
