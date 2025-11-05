@@ -4,12 +4,24 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Heap, A Complete Binary Tree.
+ * Each Node contains no smaller/larger than objects of its descendants.
+ */
 public abstract class Heap<T extends Comparable<T>> implements Tree<T> , Serializable {
+    //
+    // Heap Class Setup and Constructor
+    //
+
     protected ArrayList<T> heap;
 
     public Heap() {
         heap = new ArrayList<>();
     }
+
+    //
+    // Heap Class Operation Methods
+    //
 
     @Override
     public void insert(T value) {

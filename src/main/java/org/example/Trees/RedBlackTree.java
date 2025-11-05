@@ -320,7 +320,7 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T>, Serializa
         }
     }
 
-    // fix the color of the tree and nodes
+
     private void fixDelete(Node node) {
         while (node != root && (node == null || node.color == BLACK)) {
             if (node == node.parent.left) {
@@ -418,16 +418,16 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T>, Serializa
      */
     @Override
     public List<T> inorderTraversal() {
-        List<T> result = new ArrayList<>();
-        inorderTraversal(root, result);
+        List<T> result = new ArrayList<>();  // creats the list of nodes
+        inorderTraversal(root, result);  // performs the traversal
         return result;
     }
 
     private void inorderTraversal(Node node, List<T> result) {
-        if (node != null) {
-            inorderTraversal(node.left, result);
-            result.add(node.value);
-            inorderTraversal(node.right, result);
+        if (node != null) { // return condition edge case
+            inorderTraversal(node.left, result);  // rec call on left sibling
+            result.add(node.value);  // add it to the list
+            inorderTraversal(node.right, result);  // rec call on right sibling
         }
     }
 
@@ -460,50 +460,70 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T>, Serializa
         return root;
     }
 
-    //
-    // Rotation Methods
-    //
+    /**
+    * Rotation Methods
+    */
 
     private void rotateLeft(Node node) {
+        // Init right child of the node being rotated
         Node rightChild = node.right;
+        // take the left subtree of right child and make it the right subtree of the node being rotated
         node.right = rightChild.left;
 
+        // if transfered subtree exists, update the parent to pointer to the node being transfered
         if (rightChild.left != null) {
             rightChild.left.parent = node;
         }
 
+        // set the right child parent pointer to node's original parent, to move the right child up
         rightChild.parent = node.parent;
 
+        // if node is root, right child becomes root
         if (node.parent == null) {
             root = rightChild;
-        } else if (node == node.parent.left) {
+        }
+        // if node was a left child, update the node's parent left child pointer to right child
+         else if (node == node.parent.left) {
             node.parent.left = rightChild;
-        } else {
+        }
+        // if node was a right child, update the node's parent right child pointer to the node's right child
+        else {
             node.parent.right = rightChild;
         }
 
+        // The node is rotated as right child's left child
         rightChild.left = node;
         node.parent = rightChild;
     }
 
     private void rotateRight(Node node) {
+        // Init left child of the node being rotated
         Node leftChild = node.left;
+        // take the right subtree of left child and make it the left subtree of the node being rotated
         node.left = leftChild.right;
 
+        // if transfered subtree exists, update the parent to pointer to the node being transfered
         if (leftChild.right != null) {
             leftChild.right.parent = node;
         }
 
+        // set the left child parent pointer to node's original parent, to move the left child up
         leftChild.parent = node.parent;
 
+        // if node is root, right child becomes root
         if (node.parent == null) {
             root = leftChild;
-        } else if (node == node.parent.left) {
+        }
+        // if node was a left child, update the node's parent left child pointer to node's left child
+        else if (node == node.parent.left) {
             node.parent.left = leftChild;
-        } else {
+        }
+        // if node was a right child, update the node's parent right child pointer to the node's left child
+        else {
             node.parent.right = leftChild;
         }
 
+        // The node is rotated as left child's right child
         leftChild.right = node;
         node.parent = leftChild;
     }

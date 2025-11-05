@@ -319,6 +319,10 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T>, Serializable {
         return height(node.left) - height(node.right);
     }
 
+    /*
+    * Rotation Methods
+    */
+
     private Node rotateRight(Node y) {
         Node x = y.left;
         Node T2 = x.right;

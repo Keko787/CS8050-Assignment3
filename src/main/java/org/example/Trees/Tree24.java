@@ -39,6 +39,7 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
             this.isLeaf = true;
         }
 
+        // separate constructor based on node being leaf node
         Node(boolean isLeaf) {
             this.keys = new ArrayList<>();
             this.children = new ArrayList<>();
@@ -49,6 +50,9 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
         // Node Class Getters and setters
         //
 
+        /**
+        Keys
+         */
         List<T> getKeys() {
             return keys;
         }
@@ -57,6 +61,9 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
             this.keys = keys;
         }
 
+        /**
+         Children
+         */
         List<Node> getChildren() {
             return children;
         }
@@ -65,6 +72,9 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
             this.children = children;
         }
 
+        /**
+         Leaf
+         */
         boolean isLeaf() {
             return isLeaf;
         }
@@ -85,16 +95,18 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
             return children.size();
         }
 
-        T getKey(int index) {
-            if (index >= 0 && index < keys.size()) {
-                return keys.get(index);
+        // get child on children array
+        Node getChild(int index) {
+            if (index >= 0 && index < children.size()) {
+                return children.get(index);
             }
             return null;
         }
 
-        Node getChild(int index) {
-            if (index >= 0 && index < children.size()) {
-                return children.get(index);
+        // get keys on keys array
+        T getKey(int index) {
+            if (index >= 0 && index < keys.size()) {
+                return keys.get(index);
             }
             return null;
         }
@@ -104,17 +116,21 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
         //
 
         /**
-         * Add and Insert
+         * Add
          */
         void addKey(T key) {
             keys.add(key);
-            // Keep keys sorted
+            // Keep keys sorted due to multiple keys in 1 node
             keys.sort(Comparable::compareTo);
         }
 
         void addChild(Node child) {
             children.add(child);
         }
+
+        /**
+         * Insert
+         */
 
         void insertKeyAt(int index, T key) {
             keys.add(index, key);
@@ -127,6 +143,7 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
         /**
          * Remove
          */
+        // looks for index on key array to remove
         T removeKey(int index) {
             if (index >= 0 && index < keys.size()) {
                 return keys.remove(index);
@@ -134,6 +151,7 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
             return null;
         }
 
+        // looks for index on child array to remove
         Node removeChild(int index) {
             if (index >= 0 && index < children.size()) {
                 return children.remove(index);
@@ -211,6 +229,7 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
             throw new IllegalArgumentException("Cannot insert null value");
         }
 
+        // Base Case Handling
         // if no root, make a root
         if (root == null) {
             root = new Node();
@@ -219,65 +238,78 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
             return;
         }
 
-        // If root is full, split it
+        // Edge case: If root is full, split it
         if (root.isFull()) {
-            Node newRoot = new Node(false);
-            newRoot.getChildren().add(root);
-            splitChild(newRoot, 0);
-            root = newRoot;
+            Node newRoot = new Node(false); // make new node with leaf disabled
+            newRoot.getChildren().add(root);  // make new root parent of root
+            splitChild(newRoot, 0);  // split the root and replace with a new root
+            root = newRoot;  // set the newRoot node as root
         }
 
+        // Edge Case: insert into a non full node
         insertNonFull(root, value);
         size++;
     }
 
+    // find the proper non full node to insert value at
     private void insertNonFull(Node node, T value) {
+        // get index/pointer of rightmost/largest key in the current node
         int i = node.getKeyCount() - 1;
 
+        // Case 1: Leaf Node - Direct Insertion
         if (node.isLeaf()) {
             // Insert into leaf node
             node.addKey(value);
-        } else {
+        }
+        // Case 2: Internal Node - Navigate Down
+        else {
             // Find child to insert into
             while (i >= 0 && value.compareTo(node.getKey(i)) < 0) {
-                i--;
+                i--;  // decrease pointer
             }
-            i++;
+            i++;  // increase pointer by 1
 
+            // Hand the full child: Split child if full
+            // set the child node by getting the node's child at i
             Node child = node.getChild(i);
-
-            // Split child if full
             if (child.isFull()) {
                 splitChild(node, i);
 
-                // After split, determine which child to insert into
+                // Reorient After split, determine which child to insert into
                 if (value.compareTo(node.getKey(i)) > 0) {
-                    i++;
+                    i++;  // Point to right child
                 }
             }
 
+            // Recursive Call with Target Child
             insertNonFull(node.getChild(i), value);
         }
     }
 
+    // Insert Helper Function: Splits a full child node (with 3 keys) into two nodes.
+    // Maintains the 2-4 tree property where each node has 1-3 keys
     private void splitChild(Node parent, int index) {
+
+        // Init the full child with 3 keys and a new node that would be the right sibling
         Node fullChild = parent.getChild(index);
         Node newChild = new Node(fullChild.isLeaf());
 
         // Move middle key up to parent
-        T middleKey = fullChild.getKey(1);
-        parent.insertKeyAt(index, middleKey);
+        T middleKey = fullChild.getKey(1);  // middle index
+        parent.insertKeyAt(index, middleKey);  // insert into parent
 
-        // Split keys: left child keeps key[0], right child gets key[2]
-        newChild.addKey(fullChild.getKey(2));
-        fullChild.getKeys().remove(2);
-        fullChild.getKeys().remove(1);
+        // Split and Redistribute keys: left child keeps key[0], right child gets key[2]
+        newChild.addKey(fullChild.getKey(2));  // add right key to new right sibling node
+        fullChild.getKeys().remove(2);  // removes the key added to right sibling
+        fullChild.getKeys().remove(1);  // remove middle node that is now in parent
 
-        // Split children if not a leaf
-        if (!fullChild.isLeaf()) {
+
+        // Split and Redistribute children if not a leaf
+        if (!fullChild.isLeaf()) {  // checks if the full node getting splitted has children
             // Move last 2 children to new node
             newChild.addChild(fullChild.getChild(2));
             newChild.addChild(fullChild.getChild(3));
+            // Remove last 2 children from full child
             fullChild.getChildren().remove(3);
             fullChild.getChildren().remove(2);
         }
@@ -291,10 +323,13 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
      */
     @Override
     public boolean delete(T value) {
+
+        // base case: if root or value doesnt exist return.
         if (root == null || value == null) {
             return false;
         }
 
+        //
         boolean deleted = deleteFromNode(root, value);
 
         // If root is empty after deletion, make its only child the new root
@@ -306,6 +341,7 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
             }
         }
 
+        // if deletion is successful, reduce tree size
         if (deleted) {
             size--;
         }
@@ -314,23 +350,33 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
     }
 
     private boolean deleteFromNode(Node node, T value) {
+        // get index/pointer of node based on key value
         int i = node.findKeyIndex(value);
 
+        // Case 1: If Key is found in the node
         if (i < node.getKeyCount() && value.compareTo(node.getKey(i)) == 0) {
             // Key found in this node
-            if (node.isLeaf()) {
+            if (node.isLeaf()) {  // if node is leaf, direct deletion
                 node.removeKey(i);
                 return true;
-            } else {
+            }
+            // if not, delete from internal node
+            else {
                 return deleteFromInternalNode(node, i);
             }
-        } else if (node.isLeaf()) {
+        }
+        // Case 2: edge case - node is leaf, so its the end of the search
+        else if (node.isLeaf()) {
             // Key not found
             return false;
-        } else {
-            // Key might be in subtree
+        }
+        // Case 3: Key might still be in tree - keep looking
+        else {
+
+            // records whether the last child is accessed
             boolean isInLastChild = (i == node.getKeyCount());
 
+            // get the child at index i of node in question
             Node child = node.getChild(i);
 
             // Ensure child has at least 2 keys before descending
@@ -339,34 +385,46 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
 
                 // After filling, the key position might have changed
                 i = node.findKeyIndex(value);
+                // check if the value to be deleted is in the current node
                 if (i < node.getKeyCount() && value.compareTo(node.getKey(i)) == 0) {
                     child = node;
                     return deleteFromInternalNode(node, i);
                 }
 
+                // edge case: handles if lastchild is the value but if keys shifted
                 if (isInLastChild && i > node.getKeyCount()) {
                     i = node.getKeyCount();
                 }
 
+                // sets targeted child to descend into
                 child = node.getChild(i);
             }
 
+            // recursive call on child node
             return deleteFromNode(child, value);
         }
     }
 
     private boolean deleteFromInternalNode(Node node, int index) {
+        // Saves key being deleted
         T key = node.getKey(index);
 
+        // Case 1: If left child has >=2 keys - Replace with Predecessor
         if (node.getChild(index).getKeyCount() >= 2) {
             T predecessor = getPredecessor(node, index);
             node.getKeys().set(index, predecessor);
             return deleteFromNode(node.getChild(index), predecessor);
-        } else if (node.getChild(index + 1).getKeyCount() >= 2) {
+        }
+
+        // Case 2: If right child has >=2 keys - Replace with Successor
+        else if (node.getChild(index + 1).getKeyCount() >= 2) {
             T successor = getSuccessor(node, index);
             node.getKeys().set(index, successor);
             return deleteFromNode(node.getChild(index + 1), successor);
-        } else {
+        }
+
+        // Case 3: If both children has <2 keys - Merge Children
+        else {
             merge(node, index);
             return deleteFromNode(node.getChild(index), key);
         }
@@ -375,22 +433,26 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
     /**
      * Tree Sorting Operations
      */
+
+    // Finds the predecessor - largest value smaller than a key at position index
     private T getPredecessor(Node node, int index) {
-        Node current = node.getChild(index);
-        while (!current.isLeaf()) {
-            current = current.getChild(current.getChildCount() - 1);
+        Node current = node.getChild(index);  // the subtree left of the index
+        while (!current.isLeaf()) {  // while the current node is not a leaf node
+            current = current.getChild(current.getChildCount() - 1);  // traverse the tree to the right
         }
-        return current.getKey(current.getKeyCount() - 1);
+        return current.getKey(current.getKeyCount() - 1);  // Returns the nodes rightmost/largest key in leaf
     }
 
+    //  Finds the successor - smallest value larger than a key at position index
     private T getSuccessor(Node node, int index) {
-        Node current = node.getChild(index + 1);
-        while (!current.isLeaf()) {
-            current = current.getChild(0);
+        Node current = node.getChild(index + 1);  // the subtree right of the index
+        while (!current.isLeaf()) {  // while the current node is not a leaf node
+            current = current.getChild(0);  // Moves to the leftmost child at each level
         }
-        return current.getKey(0);
+        return current.getKey(0);  // Returns the nodes leftmost/smallest key in the leaf
     }
 
+    // Ensures a child has at least 2 keys before deletion
     private void fillChild(Node node, int index) {
         // Try to borrow from left sibling
         if (index != 0 && node.getChild(index - 1).getKeyCount() >= 2) {
@@ -409,8 +471,10 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
             }
         }
     }
-
+    //  Borrows a key from left sibling through parent rotation.
+    //  Child gains a key, left sibling loses a key, parent acts as intermediary
     private void borrowFromLeft(Node node, int childIndex) {
+        // init the child that needs an extra key and the left sibling (one position to the left)
         Node child = node.getChild(childIndex);
         Node sibling = node.getChild(childIndex - 1);
 
@@ -423,12 +487,16 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
 
         // Move child pointer if not leaf
         if (!child.isLeaf()) {
+            // Takes the rightmost child from sibling, Adds as child's leftmost child
             child.getChildren().add(0, sibling.getChild(sibling.getChildCount() - 1));
-            sibling.removeChild(sibling.getChildCount() - 1);
+            sibling.removeChild(sibling.getChildCount() - 1);  // removes original child pointer
         }
     }
 
+    // Borrows from right sibling through parent rotation.
+    // Child gains a key, right sibling loses a key, parent acts as intermediary
     private void borrowFromRight(Node node, int childIndex) {
+        // init the child that needs an extra key and the right sibling (one position to the right)
         Node child = node.getChild(childIndex);
         Node sibling = node.getChild(childIndex + 1);
 
@@ -441,27 +509,30 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
 
         // Move child pointer if not leaf
         if (!child.isLeaf()) {
+            // Takes sibling's leftmost child, Adds as child's rightmost child
             child.addChild(sibling.getChild(0));
             sibling.removeChild(0);
         }
     }
 
     private void merge(Node node, int index) {
+        // init the left child (will receive all merged keys)
+        // and the right child (will be merged into left child, then deleted)
         Node child = node.getChild(index);
         Node sibling = node.getChild(index + 1);
 
-        // Pull key from this node and merge with right sibling
+        // Pull key from parent, add it to the left child, and merge with right sibling
         child.addKey(node.getKey(index));
 
         // Copy keys from sibling to child
-        for (T key : sibling.getKeys()) {
+        for (T key : sibling.getKeys()) {  // loop through all keys in sibling
             child.addKey(key);
         }
 
         // Copy child pointers from sibling to child
-        if (!child.isLeaf()) {
-            for (Node grandChild : sibling.getChildren()) {
-                child.addChild(grandChild);
+        if (!child.isLeaf()) {  // internal nodes only
+            for (Node grandChild : sibling.getChildren()) {  // iterates through sibling's children, transfering all child pointers
+                child.addChild(grandChild);  // add each grandchild to left child
             }
         }
 
@@ -471,6 +542,10 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
         // Remove the sibling
         node.removeChild(index + 1);
     }
+
+    /**
+    * Searches, Traversal and Size
+    */
 
     @Override
     public boolean contains(T value) {
