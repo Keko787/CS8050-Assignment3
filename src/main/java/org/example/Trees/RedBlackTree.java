@@ -122,10 +122,6 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T>, Serializa
         }
 
         // if root exist, insert the value using BST properties
-        /*
-        * Standard BST insert to insert the new value
-        */
-
         // init current as root and parent as null
         Node current = root;
         Node parent = null;
@@ -162,6 +158,7 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T>, Serializa
         size++;
         // eof BST Insert
 
+        // fix the violations and symmetry with respect to newNode
         fixInsert(newNode);
     }
 
@@ -353,9 +350,9 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T>, Serializa
 
     // fixes symmetry during deletion
     private void fixDelete(Node node) {
-        //
+        // while the node color is black while not being root
         while (node != root && (node == null || node.color == BLACK)) {
-            //
+            // if node is left child of parent
             if (node == node.parent.left) {
                 Node sibling = node.parent.right;
 
@@ -402,7 +399,7 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T>, Serializa
                     node = root;  // set node pointer to root
                 }
             }
-            // right child
+            // if node is right child of parent
             else {
                 Node sibling = node.parent.left;
 
