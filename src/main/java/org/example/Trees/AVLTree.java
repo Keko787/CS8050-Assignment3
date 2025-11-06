@@ -166,10 +166,12 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T>, Serializable {
      */
     @Override
     public boolean delete(T value) {
+        // base case: root doesnt exist and value
         if (root == null || value == null) {
             return false;
         }
 
+        // begin the delete search from the root
         int initialSize = size;
         root = delete(root, value);
         return size < initialSize;
@@ -250,19 +252,19 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T>, Serializable {
     }
 
     private boolean search(Node node, T value) {
+        // base case: node or value doesnt exist
         if (node == null || value == null) {
             return false;
         }
 
+        // compare value with node's value and traverse the node based on the value
         int cmp = value.compareTo(node.value);
         if (cmp < 0) {
             return search(node.left, value);
         }
-
         else if (cmp > 0) {
             return search(node.right, value);
         }
-
         else {
             return true;
         }
@@ -284,6 +286,7 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T>, Serializable {
      */
     @Override
     public List<T> inorderTraversal() {
+        // init the inorder search
         List<T> result = new ArrayList<>();
         inorderTraversal(root, result);
         return result;
@@ -291,9 +294,9 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T>, Serializable {
 
     private void inorderTraversal(Node node, List<T> result) {
         if (node != null) {
-            inorderTraversal(node.left, result);
-            result.add(node.value);
-            inorderTraversal(node.right, result);
+            inorderTraversal(node.left, result);  // rec call. go left
+            result.add(node.value);  // add the value to the list
+            inorderTraversal(node.right, result);  // rec call. go right then end the traversal after all calls return
         }
     }
 
@@ -318,13 +321,14 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T>, Serializable {
 
     /**
      * Get the balance factor of a node
-     * Balance factor = height(left subtree) - height(right subtree)
-     * Valid values: -1, 0, 1 (for balanced AVL tree)
+     * Balance factor = height of left subtree - height of right subtree
+     * Valid values: -1, 0, 1 - for balanced AVL tree
      */
     private int getBalance(Node node) {
         if (node == null) {
             return 0;
         }
+
         return height(node.left) - height(node.right);
     }
 
@@ -333,6 +337,7 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T>, Serializable {
     */
 
     private Node rotateRight(Node y) {
+        // init sibling and right nephew
         Node x = y.left;
         Node T2 = x.right;
 
@@ -349,6 +354,7 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T>, Serializable {
     }
 
     private Node rotateLeft(Node x) {
+        // init sibling and left nephew
         Node y = x.right;
         Node T2 = y.left;
 
@@ -365,7 +371,7 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T>, Serializable {
     }
 
     /**
-     * Get the node with minimum value (leftmost node)
+     * Get the node with minimum value/leftmost node
      */
     private Node getMin(Node node) {
         while (node.left != null) {
@@ -375,7 +381,7 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T>, Serializable {
     }
 
     /**
-     * Get the node with maximum value (rightmost node)
+     * Get the node with maximum value/rightmost node
      */
     private Node getMax(Node node) {
         while (node.right != null) {
@@ -384,32 +390,35 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T>, Serializable {
         return node;
     }
 
-    //
-    // Helper methods for debugging
-    //
+    /*
+    * Helper methods for debugging
+    */
 
     /**
-     * Check if the tree is balanced (for debugging and testing on runtime)
+     * Check if the tree is balanced - for debugging and testing on runtime
      */
     public boolean isBalanced() {
         return isBalanced(root);
     }
 
     private boolean isBalanced(Node node) {
+        // base case: check if node exist
         if (node == null) {
             return true;
         }
 
+        // check balance of node
         int balance = getBalance(node);
         if (Math.abs(balance) > 1) {
             return false;
         }
 
+        // rec call on both children
         return isBalanced(node.left) && isBalanced(node.right);
     }
 
     /**
-     * Get the height of the tree (to test height and other height checking methods)
+     * Get the height of the tree - to test height and other height checking methods
      */
     public int getHeight() {
         return height(root);
