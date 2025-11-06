@@ -383,11 +383,12 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
             if (child.getKeyCount() < 2) {
                 fillChild(node, i);
 
-                // After filling, the key position might have changed
+                // After filling, research the key position based on the value
                 i = node.findKeyIndex(value);
-                // check if the value to be deleted is in the current node
+
+                // If Key is found in the node
                 if (i < node.getKeyCount() && value.compareTo(node.getKey(i)) == 0) {
-                    child = node;
+                    child = node;  // update child ref to current node and return delete from internal node
                     return deleteFromInternalNode(node, i);
                 }
 
@@ -411,22 +412,22 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
 
         // Case 1: If left child has >=2 keys - Replace with Predecessor
         if (node.getChild(index).getKeyCount() >= 2) {
-            T predecessor = getPredecessor(node, index);
-            node.getKeys().set(index, predecessor);
-            return deleteFromNode(node.getChild(index), predecessor);
+            T predecessor = getPredecessor(node, index);  // get the number that is largest value smaller than the value in index
+            node.getKeys().set(index, predecessor);  // replace with predecessor
+            return deleteFromNode(node.getChild(index), predecessor);  // rec call. with predecessor
         }
 
         // Case 2: If right child has >=2 keys - Replace with Successor
         else if (node.getChild(index + 1).getKeyCount() >= 2) {
-            T successor = getSuccessor(node, index);
-            node.getKeys().set(index, successor);
-            return deleteFromNode(node.getChild(index + 1), successor);
+            T successor = getSuccessor(node, index);  // get smallest larger value than the value in index
+            node.getKeys().set(index, successor);  // replace with successor
+            return deleteFromNode(node.getChild(index + 1), successor); // rec call. with successor
         }
 
         // Case 3: If both children has <2 keys - Merge Children
         else {
-            merge(node, index);
-            return deleteFromNode(node.getChild(index), key);
+            merge(node, index);  // merge both children of node
+            return deleteFromNode(node.getChild(index), key);  // rec call. with merged child
         }
     }
 
@@ -462,12 +463,13 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
         else if (index != node.getKeyCount() && node.getChild(index + 1).getKeyCount() >= 2) {
             borrowFromRight(node, index);
         }
-        // Merge with sibling
+        // Try to Merge with sibling
         else {
-            if (index != node.getKeyCount()) {
-                merge(node, index);
-            } else {
-                merge(node, index - 1);
+            if (index != node.getKeyCount()) {  // if not rightmost child
+                merge(node, index);  // merge with right sibling
+            }
+            else {  // if rightmost child
+                merge(node, index - 1);  // merge with left sibling, not right
             }
         }
     }
@@ -515,6 +517,9 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
         }
     }
 
+    // Merges child[index] with child[index + 1]
+    // Parent's separator key joins the merge,
+    // results in one combined child, parent loses a key and child
     private void merge(Node node, int index) {
         // init the left child (will receive all merged keys)
         // and the right child (will be merged into left child, then deleted)
@@ -553,23 +558,29 @@ public class Tree24<T extends Comparable<T>> implements Tree<T>, Serializable {
     }
 
     private boolean search(Node node, T value) {
+
+        // base case: ensures invalid values and nodes instantly return false
         if (node == null || value == null) {
             return false;
         }
 
         int i = 0;
+        // Scans through keys from left to right to find where value belongs
         while (i < node.getKeyCount() && value.compareTo(node.getKey(i)) > 0) {
             i++;
         }
 
+        // Compares search value with current key
         if (i < node.getKeyCount() && value.compareTo(node.getKey(i)) == 0) {
             return true;
         }
 
+        // Base case: at leaf, no further to search
         if (node.isLeaf()) {
             return false;
         }
 
+        // Rec call. Searches in the appropriate child subtree
         return search(node.getChild(i), value);
     }
 

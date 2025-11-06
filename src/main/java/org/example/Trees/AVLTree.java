@@ -116,9 +116,13 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T>, Serializable {
         int cmp = value.compareTo(node.value);
         if (cmp < 0) {
             node.left = insert(node.left, value);
-        } else if (cmp > 0) {
+        }
+
+        else if (cmp > 0) {
             node.right = insert(node.right, value);
-        } else {
+        }
+
+        else {
             // Duplicate value, don't insert
             return node;
         }
@@ -177,6 +181,7 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T>, Serializable {
             return null;
         }
 
+        // compare value to delete with node's value
         int cmp = value.compareTo(node.value);
         if (cmp < 0) {
             node.left = delete(node.left, value);
@@ -252,9 +257,13 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T>, Serializable {
         int cmp = value.compareTo(node.value);
         if (cmp < 0) {
             return search(node.left, value);
-        } else if (cmp > 0) {
+        }
+
+        else if (cmp > 0) {
             return search(node.right, value);
-        } else {
+        }
+
+        else {
             return true;
         }
     }
