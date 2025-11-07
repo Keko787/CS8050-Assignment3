@@ -391,7 +391,7 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T>, Serializable {
     }
 
     /*
-    * Helper methods for debugging
+    * Helper methods for Debugging
     */
 
     /**
