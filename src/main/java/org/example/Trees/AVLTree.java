@@ -371,7 +371,7 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T>, Serializable {
     }
 
     /**
-     * Get the node with minimum value/leftmost node
+     * Get the node with minimum value/ leftmost node
      */
     private Node getMin(Node node) {
         while (node.left != null) {
@@ -381,7 +381,7 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T>, Serializable {
     }
 
     /**
-     * Get the node with maximum value/rightmost node
+     * Get the node with maximum value/ rightmost node
      */
     private Node getMax(Node node) {
         while (node.right != null) {
